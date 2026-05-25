@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+  <!-- Subtle amber-tinted background square with rounded corners -->
+  <rect width="40" height="40" rx="5" fill="rgba(232,184,109,0.08)" stroke="rgba(232,184,109,0.22)" stroke-width="0.8"/>
+  <!-- Geometric M glyph -->
+  <path d="M9 29V11L20 22L31 11V29" stroke="#e8b86d" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Accent dot — the period in "M." -->
+  <circle cx="33.5" cy="30.5" r="2.4" fill="#e8b86d"/>
+</svg>
