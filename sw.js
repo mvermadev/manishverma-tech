@@ -7,7 +7,7 @@
      POST / other  → pass through (form submissions, analytics)
    ───────────────────────────────────────── */
 
-var CACHE_NAME  = 'manishverma-v2';       // bump on every new deploy
+var CACHE_NAME  = 'manishverma-v3';       // bump on every new deploy
 var FONTS_CACHE = 'manishverma-fonts-v1'; // fonts rarely change — keep separate
 
 // Paths are built dynamically from the SW scope so the same sw.js works
