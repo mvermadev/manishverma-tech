@@ -1927,7 +1927,7 @@
         </section>
 
         <footer>
-            <div class="footer-copy">© 2026 Manish · Lead Experience Engineer · Pune, India</div>
+            <div class="footer-copy">© <span id="footer-year"></span> Manish · Lead Experience Engineer · Pune, India</div>
             <div class="footer-links">
                 <a href="mailto:mverma.builds@gmail.com">Email</a>
                 <a href="https://www.linkedin.com/in/coder-mverma/" target="_blank">LinkedIn</a>
@@ -2117,6 +2117,7 @@
                 el.style.transform = 'translateY(24px)';
                 obs.observe(el);
             });
-        </script> 
+        </script>
+        <script>document.getElementById('footer-year').textContent = new Date().getFullYear();</script>
     </body>
 </html>
