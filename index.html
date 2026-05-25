@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manish — Lead Experience Engineer</title>
+  <meta name="description" content="Lead Experience Engineer specialising in enterprise-scale React ecosystems, design systems, and product-grade frontend architecture." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #111111;
+      --surface2: #181818;
+      --border: rgba(255,255,255,0.07);
+      --text: #f0ede8;
+      --muted: rgba(240,237,232,0.45);
+      --accent: #e8b86d;
+      --accent2: #7ecac3;
+      --red: #e87d6d;
+      --font-display: 'Syne', sans-serif;
+      --font-body: 'Crimson Pro', Georgia, serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 18px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* Grain texture overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.028;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    /* Custom cursor */
+    .cursor {
+      width: 10px; height: 10px;
+      background: var(--accent);
+      border-radius: 50%;
+      position: fixed;
+      top: 0; left: 0;
+      pointer-events: none;
+      z-index: 9999;
+      transition: transform 0.15s ease;
+      mix-blend-mode: difference;
+    }
+    .cursor-ring {
+      width: 36px; height: 36px;
+      border: 1.5px solid var(--accent);
+      border-radius: 50%;
+      position: fixed;
+      top: 0; left: 0;
+      pointer-events: none;
+      z-index: 9998;
+      transition: transform 0.4s cubic-bezier(0.23,1,0.32,1), opacity 0.3s;
+      opacity: 0.6;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 24px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.3s, background 0.3s, backdrop-filter 0.3s;
+    }
+    nav.scrolled {
+      border-color: var(--border);
+      background: rgba(10,10,10,0.85);
+      backdrop-filter: blur(16px);
+    }
+    .nav-logo {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: 0.04em;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links {
+      display: flex;
+      gap: 36px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--accent);
+      padding: 10px 22px;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .nav-cta:hover { opacity: 0.85; }
+
+    /* ─── HERO ─── */
+    #hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-left {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 140px 64px 80px;
+    }
+    .hero-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.2s forwards;
+    }
+    .hero-name {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(3.5rem, 6vw, 6.5rem);
+      line-height: 0.92;
+      letter-spacing: -0.02em;
+      margin-bottom: 32px;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.35s forwards;
+    }
+    .hero-name em {
+      font-style: normal;
+      color: var(--accent);
+      display: block;
+    }
+    .hero-desc {
+      font-size: 1.2rem;
+      line-height: 1.65;
+      color: var(--muted);
+      max-width: 460px;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.5s forwards;
+      font-weight: 300;
+    }
+    .hero-desc strong { color: var(--text); font-weight: 400; }
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      margin-top: 48px;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.65s forwards;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 14px 32px;
+      text-decoration: none;
+      transition: opacity 0.2s;
+      display: inline-block;
+    }
+    .btn-primary:hover { opacity: 0.85; }
+    .btn-secondary {
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 14px 32px;
+      text-decoration: none;
+      transition: border-color 0.2s, color 0.2s;
+      display: inline-block;
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+    .hero-right {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .hero-visual {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #1a1208 0%, #0a0a0a 50%, #091413 100%);
+      opacity: 0;
+      animation: fadeIn 1s 0.1s forwards;
+    }
+    .hero-geo {
+      position: absolute;
+      width: 480px;
+      height: 480px;
+      border: 1px solid rgba(232,184,109,0.12);
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: spinSlow 40s linear infinite;
+    }
+    .hero-geo::before {
+      content: '';
+      position: absolute;
+      inset: 40px;
+      border: 1px solid rgba(126,202,195,0.1);
+      border-radius: 50%;
+      animation: spinSlow 28s linear reverse infinite;
+    }
+    .hero-geo::after {
+      content: '';
+      position: absolute;
+      inset: 100px;
+      border: 1px solid rgba(232,184,109,0.08);
+      border-radius: 50%;
+    }
+    .hero-badge {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      opacity: 0;
+      animation: fadeIn 1s 0.8s forwards;
+    }
+    .hero-badge-num {
+      font-family: var(--font-display);
+      font-size: 7rem;
+      font-weight: 800;
+      line-height: 1;
+      color: var(--accent);
+      opacity: 0.15;
+    }
+    .hero-badge-label {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      margin-top: -16px;
+      color: var(--text);
+    }
+    .hero-badge-sub {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    /* Stats strip */
+    .hero-stats {
+      position: absolute;
+      bottom: 48px;
+      left: 64px;
+      right: 64px;
+      display: flex;
+      gap: 48px;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.9s forwards;
+    }
+    .stat { border-left: 2px solid var(--accent); padding-left: 16px; }
+    .stat-num {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--text);
+    }
+    .stat-label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* ─── SECTIONS ─── */
+    section { padding: 120px 64px; }
+    .section-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 24px;
+      margin-bottom: 72px;
+    }
+    .section-num {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      padding-top: 8px;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 4vw, 3.5rem);
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+    }
+    .section-title em {
+      font-style: italic;
+      font-family: var(--font-body);
+      font-weight: 300;
+      color: var(--muted);
+    }
+
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 0 64px;
+    }
+
+    /* ─── ABOUT ─── */
+    #about {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+    .about-left .section-header { margin-bottom: 40px; }
+    .about-body {
+      font-size: 1.2rem;
+      line-height: 1.75;
+      font-weight: 300;
+      color: var(--muted);
+    }
+    .about-body strong { color: var(--text); font-weight: 400; }
+    .about-body p + p { margin-top: 20px; }
+    .about-pull {
+      margin-top: 32px;
+      padding: 28px 32px;
+      border-left: 3px solid var(--accent);
+      background: var(--surface);
+      font-size: 1.05rem;
+      font-style: italic;
+      color: var(--text);
+      font-weight: 300;
+    }
+
+    .about-right {}
+    .about-info-grid {
+      display: grid;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    .info-row {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      background: var(--surface);
+    }
+    .info-key {
+      padding: 18px 20px;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border-right: 1px solid var(--border);
+    }
+    .info-val {
+      padding: 18px 20px;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+    .info-val a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .about-highlight {
+      margin-top: 24px;
+      background: linear-gradient(135deg, #1a1208, #0d1211);
+      border: 1px solid rgba(232,184,109,0.15);
+      padding: 28px 32px;
+    }
+    .ah-label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .ah-text {
+      font-size: 1rem;
+      line-height: 1.65;
+      color: var(--text);
+      font-weight: 300;
+    }
+
+    /* ─── SKILLS ─── */
+    #skills { background: var(--surface); }
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    .skill-card {
+      background: var(--bg);
+      padding: 40px 36px;
+      transition: background 0.3s;
+    }
+    .skill-card:hover { background: var(--surface2); }
+    .skill-icon {
+      width: 40px; height: 40px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .skill-icon svg { width: 28px; height: 28px; }
+    .skill-name {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .skill-desc {
+      font-size: 0.88rem;
+      line-height: 1.65;
+      color: var(--muted);
+    }
+    .skill-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 20px;
+    }
+    .tag {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .tag.accent { border-color: rgba(232,184,109,0.3); color: var(--accent); }
+    .tag.teal { border-color: rgba(126,202,195,0.3); color: var(--accent2); }
+
+    /* ─── EXPERIENCE ─── */
+    #experience {}
+    .exp-list { display: flex; flex-direction: column; gap: 2px; }
+    .exp-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .exp-header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: start;
+      padding: 36px 40px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .exp-header:hover { background: var(--surface2); }
+    .exp-role {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .exp-company {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .exp-meta {
+      text-align: right;
+    }
+    .exp-period {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+    .exp-location {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    .exp-toggle {
+      width: 24px; height: 24px;
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      margin-top: 4px;
+      margin-left: 20px;
+      transition: background 0.2s, border-color 0.2s;
+      flex-shrink: 0;
+      font-size: 16px;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .exp-item.open .exp-toggle {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--bg);
+    }
+    .exp-body {
+      display: none;
+      padding: 0 40px 36px;
+      border-top: 1px solid var(--border);
+    }
+    .exp-item.open .exp-body { display: block; }
+    .exp-body-intro {
+      font-size: 1rem;
+      color: var(--muted);
+      margin-bottom: 24px;
+      margin-top: 28px;
+      line-height: 1.7;
+    }
+    .exp-achievements {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .exp-ach {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .exp-ach-bullet {
+      width: 6px; height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 8px;
+    }
+    .exp-ach-text {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: var(--muted);
+    }
+    .exp-ach-text strong { color: var(--text); font-weight: 400; }
+
+    /* ─── PROJECTS / ACHIEVEMENTS ─── */
+    #achievements { background: var(--surface); }
+    .ach-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    .ach-card {
+      background: var(--bg);
+      padding: 48px 44px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s;
+    }
+    .ach-card:hover { background: var(--surface2); }
+    .ach-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .ach-card:hover::before { opacity: 1; }
+    .ach-number {
+      font-family: var(--font-display);
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: var(--accent);
+      opacity: 0.12;
+      line-height: 1;
+      margin-bottom: -8px;
+    }
+    .ach-title {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+    .ach-desc {
+      font-size: 0.92rem;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+    .ach-tech {
+      margin-top: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    /* ─── EDUCATION ─── */
+    #education {}
+    .edu-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    .edu-card {
+      background: var(--surface);
+      padding: 40px 36px;
+    }
+    .edu-year {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .edu-degree {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 10px;
+    }
+    .edu-institution {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ─── AI & TOOLS ─── */
+    #tools { background: linear-gradient(135deg, #0f0d08, #080d0d); }
+    .tools-intro {
+      max-width: 560px;
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--muted);
+      margin-bottom: 56px;
+    }
+    .tools-intro strong { color: var(--text); }
+    .tools-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .tool-pill {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 12px 20px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+    .tool-pill:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(232,184,109,0.04);
+    }
+    .tool-pill.featured {
+      border-color: rgba(232,184,109,0.3);
+      color: var(--accent);
+    }
+
+    /* ─── CONTACT ─── */
+    #contact {
+      text-align: center;
+      padding: 140px 64px;
+      position: relative;
+      overflow: hidden;
+    }
+    .contact-bg {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 60% at 50% 100%, rgba(232,184,109,0.05) 0%, transparent 70%);
+    }
+    .contact-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 24px;
+      opacity: 0;
+    }
+    .contact-title {
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 6vw, 6rem);
+      font-weight: 800;
+      line-height: 0.95;
+      letter-spacing: -0.025em;
+      margin-bottom: 28px;
+      opacity: 0;
+    }
+    .contact-title em {
+      font-style: italic;
+      font-family: var(--font-body);
+      font-weight: 300;
+      color: var(--muted);
+    }
+    .contact-sub {
+      font-size: 1.1rem;
+      color: var(--muted);
+      max-width: 480px;
+      margin: 0 auto 52px;
+      line-height: 1.7;
+      font-weight: 300;
+      opacity: 0;
+    }
+    .contact-links {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      opacity: 0;
+    }
+    .contact-link {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 14px 28px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .contact-link.primary {
+      background: var(--accent);
+      color: var(--bg);
+    }
+    .contact-link.primary:hover { opacity: 0.85; }
+    .contact-link.ghost {
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .contact-link.ghost:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 64px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-copy {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+    }
+    .footer-links {
+      display: flex;
+      gap: 28px;
+    }
+    .footer-links a {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--accent); }
+
+    /* ─── ANIMATIONS ─── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes spinSlow {
+      from { transform: translate(-50%,-50%) rotate(0deg); }
+      to { transform: translate(-50%,-50%) rotate(360deg); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─── AVAILABILITY BADGE ─── */
+    .avail-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #6ee7b7;
+      border: 1px solid rgba(110,231,183,0.2);
+      background: rgba(110,231,183,0.05);
+      padding: 7px 14px;
+      margin-bottom: 28px;
+      display: inline-flex;
+    }
+    .avail-dot {
+      width: 6px; height: 6px;
+      background: #6ee7b7;
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.7); }
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 1024px) {
+      #hero { grid-template-columns: 1fr; }
+      .hero-right { display: none; }
+      .hero-left { padding: 140px 40px 100px; }
+      #about { grid-template-columns: 1fr; }
+      .skills-grid { grid-template-columns: repeat(2, 1fr); }
+      .ach-grid { grid-template-columns: 1fr; }
+      .edu-grid { grid-template-columns: 1fr; }
+      section { padding: 80px 40px; }
+      .divider { margin: 0 40px; }
+      nav { padding: 20px 40px; }
+      .nav-links { display: none; }
+      footer { flex-direction: column; gap: 16px; text-align: center; }
+    }
+    @media (max-width: 640px) {
+      .hero-stats { flex-wrap: wrap; gap: 24px; left: 40px; right: 40px; }
+      .skills-grid { grid-template-columns: 1fr; }
+      section { padding: 64px 24px; }
+      .divider { margin: 0 24px; }
+      nav { padding: 18px 24px; }
+      footer { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- NAV -->
+  <nav id="nav">
+    <a href="#hero" class="nav-logo">M<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#achievements">Work</a></li>
+      <li><a href="#education">Education</a></li>
+    </ul>
+    <a href="mailto:manish@email.com" class="nav-cta">Hire Me</a>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-left">
+      <div class="avail-badge" style="opacity:0;animation:fadeUp 0.7s 0.05s forwards">
+        <div class="avail-dot"></div>
+        Open to Senior / Lead Roles
+      </div>
+      <div class="hero-eyebrow">Lead Experience Engineer · Product Thinker</div>
+      <h1 class="hero-name">
+        Manish<br />
+        <em>Builds what</em><br />
+        <em>ships.</em>
+      </h1>
+      <p class="hero-desc">
+        <strong>6+ years</strong> of enterprise-scale frontend engineering. I turn complex product requirements into performant, scalable React ecosystems — and mentor teams to own them long after I'm done.
+      </p>
+      <div class="hero-actions">
+        <a href="#experience" class="btn-primary">See My Work</a>
+        <a href="#contact" class="btn-secondary">Get In Touch</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-visual"></div>
+      <div class="hero-geo"></div>
+      <div class="hero-badge">
+        <div class="hero-badge-num">6+</div>
+        <div class="hero-badge-label">Years of Impact</div>
+        <div class="hero-badge-sub">Enterprise · Product · Scale</div>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">6+</div>
+        <div class="stat-label">Years Frontend</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">40+</div>
+        <div class="stat-label">Components Shipped</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">3</div>
+        <div class="stat-label">Enterprise Platforms</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">∞</div>
+        <div class="stat-label">PRs Reviewed</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="about-left reveal">
+      <div class="section-header">
+        <span class="section-num">01</span>
+        <h2 class="section-title">The person<br /><em>behind the code</em></h2>
+      </div>
+      <div class="about-body">
+        <p>I'm a Lead Experience Engineer at <strong>Publicis Sapient</strong>, where I own the frontend architecture of <strong>Connect</strong> — an enterprise healthcare platform serving thousands of users daily. My remit spans architecture decisions, design system governance, performance engineering, and upskilling a team of engineers.</p>
+        <p>I believe the best frontend engineers are <strong>product engineers</strong>: people who ask "why does this feature exist?" before asking "how do I build it?" That mindset shapes every decision I make — from component API design to CI/CD pipeline choices.</p>
+        <p>I've led a full <strong>React 19 migration</strong> across a live enterprise platform, championed GitHub Copilot adoption across teams, and built design systems that reduce onboarding time from weeks to days.</p>
+      </div>
+      <blockquote class="about-pull">
+        "I don't just deliver features — I leave codebases, teams, and processes in better shape than I found them."
+      </blockquote>
+    </div>
+
+    <div class="about-right reveal" style="transition-delay:0.15s">
+      <div class="about-info-grid">
+        <div class="info-row">
+          <div class="info-key">Based In</div>
+          <div class="info-val">Pune, India</div>
+        </div>
+        <div class="info-row">
+          <div class="info-key">Current</div>
+          <div class="info-val">Lead Experience Engineer, Publicis Sapient</div>
+        </div>
+        <div class="info-row">
+          <div class="info-key">Client</div>
+          <div class="info-val">Medtronic Inc., Kroger, McAfee, GAP, ITMAP, and several based in the UAE, among others.</div>
+        </div>
+        <div class="info-row">
+          <div class="info-key">Core Stack</div>
+          <div class="info-val">React · Next.js · TypeScript · Redux</div>
+        </div>
+        <div class="info-row">
+          <div class="info-key">Experience</div>
+          <div class="info-val">6+ Years</div>
+        </div>
+        <div class="info-row">
+          <div class="info-key">Education</div>
+          <div class="info-val">MSc, University of Leicester</div>
+        </div>
+        <div class="info-row">
+          <div class="info-key">L1B Visa</div>
+          <div class="info-val">Deputed Internationally (US)</div>
+        </div>
+        <div class="info-row">
+          <div class="info-key">Targeting</div>
+          <div class="info-val">Lead / Senior Engineer · Product-first Companies</div>
+        </div>
+      </div>
+      <div class="about-highlight">
+        <div class="ah-label">Key Differentiator</div>
+        <div class="ah-text">I've shipped production-grade React at enterprise scale, led teams through major platform migrations, and consistently operated at the intersection of engineering and product strategy — not just implementation.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="section-header reveal">
+      <span class="section-num">02</span>
+      <h2 class="section-title">Capabilities<br /><em>&amp; expertise</em></h2>
+    </div>
+    <div class="skills-grid">
+      <div class="skill-card reveal">
+        <div class="skill-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" color="#e8b86d"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+        </div>
+        <div class="skill-name">React Ecosystem</div>
+        <div class="skill-desc">Deep expertise in React architecture — hooks, context, portals, concurrent features, and React 19 internals. I don't just use the framework; I understand its trade-offs.</div>
+        <div class="skill-tags">
+          <span class="tag accent">React 19</span>
+          <span class="tag accent">Next.js</span>
+          <span class="tag">Redux Toolkit</span>
+          <span class="tag">React Query</span>
+          <span class="tag">Zustand</span>
+        </div>
+      </div>
+
+      <div class="skill-card reveal" style="transition-delay:0.05s">
+        <div class="skill-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" color="#7ecac3"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M9 3v18M15 3v18M3 9h18M3 15h18"></path></svg>
+        </div>
+        <div class="skill-name">Design Systems</div>
+        <div class="skill-desc">Built and maintained enterprise design systems used across product squads. Component library governance, token architecture, Storybook documentation — end to end.</div>
+        <div class="skill-tags">
+          <span class="tag teal">Storybook</span>
+          <span class="tag">Design Tokens</span>
+          <span class="tag">WCAG 2.1</span>
+          <span class="tag">Figma</span>
+        </div>
+      </div>
+
+      <div class="skill-card reveal" style="transition-delay:0.1s">
+        <div class="skill-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" color="#e8b86d"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+        </div>
+        <div class="skill-name">Architecture & Scale</div>
+        <div class="skill-desc">Monorepo strategies with NX, micro-frontend patterns, code-splitting, lazy loading, bundle optimisation. Designed systems that support 20+ parallel feature teams.</div>
+        <div class="skill-tags">
+          <span class="tag accent">NX Monorepo</span>
+          <span class="tag">Micro-frontends</span>
+          <span class="tag">Module Federation</span>
+          <span class="tag">Webpack</span>
+        </div>
+      </div>
+
+      <div class="skill-card reveal" style="transition-delay:0.05s">
+        <div class="skill-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" color="#7ecac3"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4l3 3"></path></svg>
+        </div>
+        <div class="skill-name">TypeScript & Quality</div>
+        <div class="skill-desc">Strong typing from day one. Cypress E2E, unit testing strategies, PR review culture, and ESLint/Prettier configurations that teams actually follow.</div>
+        <div class="skill-tags">
+          <span class="tag teal">TypeScript</span>
+          <span class="tag">Cypress</span>
+          <span class="tag">Jest</span>
+          <span class="tag">Testing Library</span>
+        </div>
+      </div>
+
+      <div class="skill-card reveal" style="transition-delay:0.1s">
+        <div class="skill-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" color="#e8b86d"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+        </div>
+        <div class="skill-name">AI-Augmented Development</div>
+        <div class="skill-desc">Not just a user of AI tools — a champion. I've driven GitHub Copilot adoption across teams, established AI-assisted code review workflows, and upskilled engineers to work faster and smarter.</div>
+        <div class="skill-tags">
+          <span class="tag accent">GitHub Copilot</span>
+          <span class="tag">Claude</span>
+          <span class="tag">ChatGPT</span>
+          <span class="tag">Prompt Engineering</span>
+        </div>
+      </div>
+
+      <div class="skill-card reveal" style="transition-delay:0.15s">
+        <div class="skill-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" color="#7ecac3"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        </div>
+        <div class="skill-name">Technical Leadership</div>
+        <div class="skill-desc">Running planning sessions, architecting solutions in pre-sales, mentoring juniors and mid-level engineers, conducting code reviews with context — not just nitpicks.</div>
+        <div class="skill-tags">
+          <span class="tag teal">Team Lead</span>
+          <span class="tag">Mentorship</span>
+          <span class="tag">Agile</span>
+          <span class="tag">Pre-sales Tech</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- EXPERIENCE -->
+  <section id="experience">
+    <div class="section-header reveal">
+      <span class="section-num">03</span>
+      <h2 class="section-title">Where I've<br /><em>made an impact</em></h2>
+    </div>
+
+    <div class="exp-list">
+
+      <div class="exp-item open reveal">
+        <div class="exp-header" onclick="toggleExp(this)">
+          <div>
+            <div class="exp-role">Lead Experience Engineer</div>
+            <div class="exp-company">Publicis Sapient</div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:0">
+            <div class="exp-meta">
+              <div class="exp-period">Apr 2026 – Present</div>
+              <div class="exp-location">Pune, India</div>
+            </div>
+            <div class="exp-toggle">−</div>
+          </div>
+        </div>
+        <div class="exp-body">
+          <p class="exp-body-intro">Promoted to Lead, owning frontend architecture for Connect — an enterprise healthcare SaaS platform serving the Metronik client. Responsibilities span architecture, design systems, CI/CD pipeline evolution, and team upskilling.</p>
+          <div class="exp-achievements">
+            <div class="exp-ach"><div class="exp-ach-bullet"></div><div class="exp-ach-text"><strong>Led complete React 19 migration</strong> across the full Connect platform — coordinating rollout across multiple feature squads with zero production regressions, delivering the sprint milestone on schedule.</div></div>
+            <div class="exp-ach"><div class="exp-ach-bullet"></div><div class="exp-ach-text"><strong>Drove GitHub Copilot adoption</strong> across engineering teams, establishing AI-assisted development workflows and running knowledge-sharing sessions that improved velocity and code quality simultaneously.</div></div>
+            <div class="exp-ach"><div class="exp-ach-bullet"></div><div class="exp-ach-text"><strong>Architected the NX monorepo strategy</strong> for Connect, enabling parallel feature development across 20+ concurrent workstreams without coupling or dependency hell.</div></div>
+            <div class="exp-ach"><div class="exp-ach-bullet"></div><div class="exp-ach-text"><strong>Produced stakeholder-facing demo materials</strong> (deck + scripted walkthrough) for the React 19 migration milestone — translating technical wins into business-language narrative for leadership.</div></div>
+            <div class="exp-ach"><div class="exp-ach-bullet"></div><div class="exp-ach-text">Own <strong>design system governance</strong> — maintaining the component library, enforcing token architecture, and running Storybook documentation reviews across squads.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-item reveal">
+        <div class="exp-header" onclick="toggleExp(this)">
+          <div>
+            <div class="exp-role">Senior Experience Engineer</div>
+            <div class="exp-company">Publicis Sapient</div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:0">
+            <div class="exp-meta">
+              <div class="exp-period">Nov 2023 – Mar 2026</div>
+              <div class="exp-location">Pune, India</div>
+            </div>
+            <div class="exp-toggle">+</div>
+          </div>
+        </div>
+        <div class="exp-body">
+          <p class="exp-body-intro">Core contributor and later tech lead on the Connect healthcare platform. Instrumental in establishing engineering standards, building the design system from scratch, and delivering complex feature modules end-to-end.</p>
+          <div class="exp-achievements">
+            <div class="exp-ach"><div class="exp-ach-bullet"></div><div class="exp-ach-text"><strong>Built the Connect design system</strong> from the ground up — component architecture, accessibility standards (WCAG 2.1), Storybook documentation, and adoption playbook.</div></div>
+            <div class="exp-ach"><div class="exp-ach-bullet"></div><div class="exp-ach-text">Delivered <strong>complex healthcare-specific UI modules</strong> — patient dashboards, scheduling interfaces, and data visualisation components — all with strict performance budgets.</div></div>
+            <div class="exp-ach"><div class="exp-ach-bullet"></div><div class="exp-ach-text"><strong>Championed Cypress E2E testing</strong> coverage across critical user flows, reducing regression escape rate significantly and providing confidence for fast-release cycles.</div></div>
+            <div class="exp-ach"><div class="exp-ach-bullet"></div><div class="exp-ach-text">Collaborated on <strong>L1B visa deputation to the US</strong> — a trust-level assignment involving direct client-facing work on enterprise deliverables.</div></div>
+            <div class="exp-ach"><div class="exp-ach-bullet"></div><div class="exp-ach-text">Mentored junior engineers through structured code review, pair programming, and personalised IDP (Individual Development Plan) support.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-item reveal">
+        <div class="exp-header" onclick="toggleExp(this)">
+          <div>
+            <div class="exp-role">Experience Engineer</div>
+            <div class="exp-company">Publicis Sapient</div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:0">
+            <div class="exp-meta">
+              <div class="exp-period">2019 – Nov 2023</div>
+              <div class="exp-location">Pune, India</div>
+            </div>
+            <div class="exp-toggle">+</div>
+          </div>
+        </div>
+        <div class="exp-body">
+          <p class="exp-body-intro">Grew from mid-level to senior individual contributor on enterprise product teams, building strong fundamentals in React ecosystems, design system implementation, and client-facing technical communication.</p>
+          <div class="exp-achievements">
+            <div class="exp-ach"><div class="exp-ach-bullet"></div><div class="exp-ach-text">Delivered feature-complete UI modules across multiple client engagements using <strong>React, TypeScript, and Redux</strong>.</div></div>
+            <div class="exp-ach"><div class="exp-ach-bullet"></div><div class="exp-ach-text">Contributed to <strong>pre-sales technical pitches</strong>, translating architectural proposals into client-understandable narratives.</div></div>
+            <div class="exp-ach"><div class="exp-ach-bullet"></div><div class="exp-ach-text">Established early expertise in <strong>NX Monorepo configurations</strong> and module boundary enforcement strategies.</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ACHIEVEMENTS -->
+  <section id="achievements">
+    <div class="section-header reveal">
+      <span class="section-num">04</span>
+      <h2 class="section-title">Signature<br /><em>achievements</em></h2>
+    </div>
+
+    <div class="ach-grid">
+      <div class="ach-card reveal">
+        <div class="ach-number">01</div>
+        <div class="ach-title">React 19 Full Platform Migration</div>
+        <div class="ach-desc">Led end-to-end React 19 migration across the entire Connect enterprise platform — multi-squad coordination, breaking change remediation, and zero production regressions. Delivered on schedule and communicated outcomes to senior stakeholders via a crafted demo deck.</div>
+        <div class="ach-tech"><span class="tag accent">React 19</span><span class="tag">NX</span><span class="tag">TypeScript</span></div>
+      </div>
+
+      <div class="ach-card reveal" style="transition-delay:0.08s">
+        <div class="ach-number">02</div>
+        <div class="ach-title">Enterprise Design System — Connect</div>
+        <div class="ach-desc">Built the Connect design system from zero — token architecture, 40+ production components, accessibility compliance, Storybook documentation, and adoption playbook. Reduced cross-squad UI inconsistency to near-zero and cut onboarding time for new engineers.</div>
+        <div class="ach-tech"><span class="tag teal">Storybook</span><span class="tag">Design Tokens</span><span class="tag accent">WCAG 2.1</span></div>
+      </div>
+
+      <div class="ach-card reveal" style="transition-delay:0.04s">
+        <div class="ach-number">03</div>
+        <div class="ach-title">AI-Augmented Engineering Culture</div>
+        <div class="ach-desc">Championed and rolled out GitHub Copilot adoption across engineering teams at Publicis Sapient. Ran training sessions, established best practices, and measurably improved developer velocity — positioning the team ahead of the industry curve on AI-assisted development.</div>
+        <div class="ach-tech"><span class="tag accent">GitHub Copilot</span><span class="tag">Claude</span><span class="tag">ChatGPT</span></div>
+      </div>
+
+      <div class="ach-card reveal" style="transition-delay:0.12s">
+        <div class="ach-number">04</div>
+        <div class="ach-title">International Client Deputation (L1B)</div>
+        <div class="ach-desc">Selected for a US-based L1B intra-company transfer — a trust-level assignment demonstrating senior technical credibility, direct client communication skills, and the ability to deliver under enterprise-grade expectations in a cross-cultural environment.</div>
+        <div class="ach-tech"><span class="tag teal">Client Facing</span><span class="tag">L1B Visa</span><span class="tag">Enterprise</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- EDUCATION -->
+  <section id="education">
+    <div class="section-header reveal">
+      <span class="section-num">05</span>
+      <h2 class="section-title">Academic<br /><em>foundations</em></h2>
+    </div>
+
+    <div class="edu-grid reveal">
+      <div class="edu-card">
+        <div class="edu-year">Postgraduate</div>
+        <div class="edu-degree">MSc</div>
+        <div class="edu-institution">University of Leicester<br />United Kingdom</div>
+      </div>
+      <div class="edu-card">
+        <div class="edu-year">Undergraduate</div>
+        <div class="edu-degree">Bachelor of Computer Applications (BCA)</div>
+        <div class="edu-institution">Kutch University<br />Gujarat, India</div>
+      </div>
+      <div class="edu-card">
+        <div class="edu-year">Diploma</div>
+        <div class="edu-degree">Diploma in Mechanical Engineering</div>
+        <div class="edu-institution">Gujarat Technological University (GTU)<br />Gujarat, India</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- AI & TOOLS -->
+  <section id="tools">
+    <div class="section-header reveal">
+      <span class="section-num">06</span>
+      <h2 class="section-title">Tools &amp;<br /><em>the AI edge</em></h2>
+    </div>
+    <p class="tools-intro reveal">I use AI tools not as a crutch, but as a <strong>multiplier</strong>. I've championed adoption, built workflows around them, and trained teams to use them effectively — putting measurable distance between my team's velocity and the industry average.</p>
+    <div class="tools-strip reveal">
+      <span class="tool-pill featured">GitHub Copilot</span>
+      <span class="tool-pill featured">Claude (Anthropic)</span>
+      <span class="tool-pill featured">ChatGPT</span>
+      <span class="tool-pill">React</span>
+      <span class="tool-pill">Next.js</span>
+      <span class="tool-pill">TypeScript</span>
+      <span class="tool-pill">Redux Toolkit</span>
+      <span class="tool-pill">NX Monorepo</span>
+      <span class="tool-pill">Storybook</span>
+      <span class="tool-pill">Cypress</span>
+      <span class="tool-pill">Jest</span>
+      <span class="tool-pill">Testing Library</span>
+      <span class="tool-pill">Webpack</span>
+      <span class="tool-pill">Vite</span>
+      <span class="tool-pill">Figma</span>
+      <span class="tool-pill">Git / GitHub</span>
+      <span class="tool-pill">CI/CD</span>
+      <span class="tool-pill">Agile / Scrum</span>
+      <span class="tool-pill">VS Code</span>
+      <span class="tool-pill">GraphQL</span>
+      <span class="tool-pill">REST APIs</span>
+      <span class="tool-pill">WCAG 2.1</span>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="contact-bg"></div>
+    <div class="contact-eyebrow reveal">Let's build something great</div>
+    <h2 class="contact-title reveal">Ready to<br /><em>deliver impact</em></h2>
+    <p class="contact-sub reveal">I'm actively exploring Senior and Lead Engineer roles at product-first companies. If your team needs someone who architects at scale, leads with clarity, and ships with precision — let's talk.</p>
+    <div class="contact-links reveal">
+      <a href="mailto:manish@email.com" class="contact-link primary">Send an Email</a>
+      <a href="https://linkedin.com/in/manish" target="_blank" class="contact-link ghost">LinkedIn</a>
+      <a href="https://github.com/manish" target="_blank" class="contact-link ghost">GitHub</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-copy">© 2026 Manish · Lead Experience Engineer · Pune, India</div>
+    <div class="footer-links">
+      <a href="mailto:manish@email.com">Email</a>
+      <a href="https://linkedin.com/in/manish" target="_blank">LinkedIn</a>
+      <a href="https://github.com/manish" target="_blank">GitHub</a>
+    </div>
+  </footer>
+
+  <script>
+    // Custom cursor
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.transform = `translate(${mx - 5}px, ${my - 5}px)`;
+    });
+    function animRing() {
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      ring.style.transform = `translate(${rx - 18}px, ${ry - 18}px)`;
+      requestAnimationFrame(animRing);
+    }
+    animRing();
+
+    // Nav scroll
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 60);
+    });
+
+    // Accordion
+    function toggleExp(header) {
+      const item = header.closest('.exp-item');
+      const toggle = header.querySelector('.exp-toggle');
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.exp-item').forEach(i => {
+        i.classList.remove('open');
+        i.querySelector('.exp-toggle').textContent = '+';
+      });
+      if (!isOpen) {
+        item.classList.add('open');
+        toggle.textContent = '−';
+      }
+    }
+
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), 0);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+    reveals.forEach(el => observer.observe(el));
+
+    // Contact section reveals
+    document.querySelectorAll('.contact-eyebrow, .contact-title, .contact-sub, .contact-links').forEach((el, i) => {
+      const obs = new IntersectionObserver(entries => {
+        if (entries[0].isIntersecting) {
+          setTimeout(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; }, i * 120);
+          obs.unobserve(el);
+        }
+      }, { threshold: 0.2 });
+      el.style.transition = 'opacity 0.7s ease, transform 0.7s ease';
+      el.style.transform = 'translateY(24px)';
+      obs.observe(el);
+    });
+  </script>
+</body>
+</html>
